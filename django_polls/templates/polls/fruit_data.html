@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fruit Size Data</title>
+    </head>
+    <body>
+
+        <h1>Fruit Size Data</h1>
+
+        <table border="1"
+            <thead>
+                <tr>{%for column in columns %}
+                        <th>{{ column }}</th>
+                        {%endfor%}
+                </tr>
+            </thead>
+
+            <tbody>
+                {%for row in data%}
+                <tr>
+                    {%for value in row.values%}
+                        <td>{{value}}</td>
+                        {%endfor%}
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+<form method="get">
+    <label for="header_id">Filter by Header ID</label>
+
+    <select name="header_id" id="header_id">
+        <option value="">All</option>
+
+        {%for id in header_ids %}
+        <option value="{{id}}"
+            {% if selected_header == id|stringformat:"s"%}
+                selected
+            {% endif %}
+        >
+            {{id}}
+        </option>
+    {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+        <h2>Average Estimated Size: {{ average_estimated_size }}</h2>
+
+        <h3>Display Range</h3>
+        <p>Min Reading: {{min_reading}}</p>
+        <p>Max Reading: {{max_reading}}</p>
+
+        <h3>Size Count Distribution</h3>
+
+        <table border="1">
+            <tr>
+                <th>Size Count</th>
+                <th>Frequency</th>
+            </tr>
+
+            {%for item in size_distribution%}
+            <tr>
+                <td>{{item.size_count}}</td>
+                <td>{{item.frequency}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <h3>Size Count Distribution Pie Chart</h3>
+
+        <canvas id="sizeChart" width="300" height="300"></canvas>
+
+        {{ labels|json_script:"chart-labels"}}
+        {{ values|json_script:"chart-values"}}
+
+        <script>
+        const labels = JSON.parse(
+            document.getElementById("chart-labels").textContent
+        );
+
+        const values = JSON.parse(
+            document.getElementById("chart-values").textContent
+        );
+           
+        const ctx = document.getElementById("sizeChart");
+
+        new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        "#FF6384",
+                        "#36A2EB",
+                        "#FFCE56",
+                        "#4BC0C0",
+                        "#9966FF",
+                        "#FF9F40",
+                        "#8DD17E",
+                        "#C9CBCF",
+                        "#FF6384",
+                        "36A2EB",
+                        "FFCE56",
+                    ]
+                }]
+            }
+        });
+        </script>
+    </body>
+</html>
